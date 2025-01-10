@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "374014434331",
+    "project_id": "counter-application-c60a7",
+    "storage_bucket": "counter-application-c60a7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:374014434331:android:2d3fdd04dd525d0ddbacbe",
+        "android_client_info": {
+          "package_name": "com.example.couter_application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPgAxmpRCJjt7Hal-GMA0pwECjs-4pDkg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
