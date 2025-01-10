@@ -32,11 +32,10 @@ class _RegisterState extends State<Register> {
   }
 
   bool _isCheckingProcess = false;
-  var userRegistration = UserRegistration();
+  var registrationProcessStatus = "";
 
   @override
   Widget build(BuildContext context) {
-
     return DecoratedBox(
       decoration: BoxDecoration(
         image: DecorationImage(
@@ -175,27 +174,42 @@ class _RegisterState extends State<Register> {
                       ),
 
                       ElevatedButton(
-                        onPressed: () async{
+                        onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                             print("Email Adress : ${_emailController.text} ############################################");
-                             
-                             setState(() {
-                               _isCheckingProcess = true;
-                             });
-
-                              var _registrationProcessStatus = await userRegistration.signUp(
-                              emailAddress: _emailController.text,
-                              password: _passwordController.text,
+                            print(
+                              "Email Adress : ${_emailController.text} ############################################",
                             );
 
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) => CounterScreen(),
-                              ),
-                            );
+                            setState(() {
+                              _isCheckingProcess = true;
+                            });
+
+                            var registrationStatus = await signUp(
+                                  emailAddress: _emailController.text,
+                                  password: _passwordController.text,
+                                );
+
+                            setState(() {
+                              registrationProcessStatus = registrationStatus;
+                            });
+
+                            if (registrationStatus == "Registered") {
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) => CounterScreen(),
+                                ),
+                              );
+                            } else {
+                              setState(() {
+                                _isCheckingProcess = false;
+                              });
+                            }
                           }
                         },
-                        child: _isCheckingProcess ? CircularProgressIndicator() : Text("Register"),
+                        child:
+                            _isCheckingProcess
+                                ? CircularProgressIndicator()
+                                : Text("Register"),
                       ),
 
                       Expanded(
@@ -225,6 +239,12 @@ class _RegisterState extends State<Register> {
                               ),
                             ),
                           ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          registrationProcessStatus,
+                          style: TextStyle(color: Colors.redAccent),
                         ),
                       ),
                     ],

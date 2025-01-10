@@ -1,3 +1,4 @@
+import 'package:couter_application/authentication/domain/user_login.dart';
 import 'package:couter_application/authentication/view/register.dart';
 import 'package:couter_application/counter_screen.dart';
 import 'package:flutter/material.dart';
@@ -12,16 +13,19 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _useremailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    _usernameController.dispose();
+    _useremailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
+
+  var isLogInProceessOn = false;
+  var logInfirebaseResponse = "";
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +41,7 @@ class _LoginState extends State<Login> {
           borderRadius: BorderRadius.circular(40),
           color: Colors.transparent,
           child: Container(
-            height: 400,
+            height: 450,
             width: 350,
             decoration: BoxDecoration(
               color: const Color.fromARGB(193, 255, 255, 255),
@@ -61,7 +65,7 @@ class _LoginState extends State<Login> {
                           hintText: "User Name or Email",
                         ),
                         keyboardType: TextInputType.text,
-                        controller: _usernameController,
+                        controller: _useremailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please enter the Username";
@@ -91,16 +95,40 @@ class _LoginState extends State<Login> {
                       ),
 
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) => CounterScreen(),
-                              ),
+
+                            setState(() {
+                              isLogInProceessOn = true;
+                            });
+
+                            var loginStatus = await logIn(
+                              emailAddress: _useremailController.text,
+                              password: _passwordController.text,
                             );
+
+                            setState(() {
+                              logInfirebaseResponse = loginStatus;
+                            });
+
+                            if (loginStatus == "Logined") {
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) => CounterScreen(),
+                                ),
+                              );
+                            } else {
+                              setState(() {
+                                isLogInProceessOn = false;
+                              });
+                            }
+
                           }
                         },
-                        child: Text("Login"),
+                        child:
+                            isLogInProceessOn
+                                ? CircularProgressIndicator()
+                                : Text("Login"),
                       ),
 
                       Expanded(
@@ -129,6 +157,12 @@ class _LoginState extends State<Login> {
                               ),
                             ),
                           ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          logInfirebaseResponse,
+                          style: TextStyle(color: Colors.redAccent),
                         ),
                       ),
                     ],
