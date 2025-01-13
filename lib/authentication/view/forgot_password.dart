@@ -1,33 +1,20 @@
 import 'package:couter_application/authentication/domain/authentication_service.dart';
-import 'package:couter_application/authentication/view/forgot_password.dart';
-import 'package:couter_application/authentication/view/register.dart';
-import 'package:couter_application/counter_screen.dart';
+import 'package:couter_application/authentication/view/login.dart';
 import 'package:flutter/material.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class ForgotPassword extends StatefulWidget {
+  const ForgotPassword({super.key});
 
   @override
-  State<Login> createState() {
-    return _LoginState();
-  }
+  State<ForgotPassword> createState() => _ForgotPasswordState();
 }
 
-class _LoginState extends State<Login> {
-  final TextEditingController _useremailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+class _ForgotPasswordState extends State<ForgotPassword> {
   final _formKey = GlobalKey<FormState>();
+  final _useremailController = TextEditingController();
   final authenticationService = AuthenticationService();
-
-  @override
-  void dispose() {
-    _useremailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  var isLogInProceessOn = false;
-  var logInfirebaseResponse = "";
+  var isResetPasswordOn = false;
+  var resetPasswordStatus = "";
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +30,7 @@ class _LoginState extends State<Login> {
           //borderRadius: BorderRadius.circular(40),
           color: Colors.transparent,
           child: Container(
-            height: 450,
+            height: 250,
             width: 350,
             decoration: BoxDecoration(
               color: const Color.fromARGB(193, 255, 255, 255),
@@ -64,7 +51,7 @@ class _LoginState extends State<Login> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
-                          hintText: "User Name or Email",
+                          hintText: "User Email",
                         ),
                         keyboardType: TextInputType.text,
                         controller: _useremailController,
@@ -75,91 +62,56 @@ class _LoginState extends State<Login> {
                           return null;
                         },
                       ),
-
-                      TextFormField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                          hintText: "Enter Password",
-                        ),
-                        maxLength: 16,
-                        controller: _passwordController,
-                        obscureText: true,
-                        validator: (value) {
-                          if (value == null ||
-                              value.isEmpty ||
-                              value.length < 8) {
-                            return "Password is always greater than 7";
-                          }
-                          return null;
-                        },
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => ForgotPassword(),
-                                ),
-                              );
-                            },
-                            child: Text("Forgot Password?"),
-                          ),
-                        ],
-                      ),
                       ElevatedButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             setState(() {
-                              isLogInProceessOn = true;
+                              isResetPasswordOn = true;
                             });
 
-                            var loginStatus = await authenticationService.logIn(
-                              emailAddress: _useremailController.text,
-                              password: _passwordController.text,
-                            );
+                            var status = await authenticationService
+                                .resetPassword(
+                                  email: _useremailController.text,
+                                );
 
                             setState(() {
-                              logInfirebaseResponse = loginStatus;
+                              resetPasswordStatus = status;
                             });
 
-                            if (loginStatus == "Logined") {
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => CounterScreen(),
-                                ),
-                              );
-                            } else {
-                              setState(() {
-                                isLogInProceessOn = false;
-                              });
-                            }
+                            // if (status == "Logined") {
+                            //   Navigator.of(context).pushReplacement(
+                            //     MaterialPageRoute(
+                            //       builder: (context) => CounterScreen(),
+                            //     ),
+                            //   );
+                            // } else {
+                            //   setState(() {
+                            //     isLogInProceessOn = false;
+                            //   });
+                            // }
                           }
                         },
                         child:
-                            isLogInProceessOn
-                                ? CircularProgressIndicator()
-                                : Text("Login"),
+                            isResetPasswordOn
+                                ? null
+                                : Text("Forgot Password"),
                       ),
 
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("Don't have an account?"),
+                            Text("Return to login page"),
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
-                                    builder: (context) => Register(),
+                                    builder: (context) => Login(),
                                   ),
                                 );
                               },
                               child: Text(
-                                "Register",
+                                "Login",
                                 style: TextStyle(
                                   color: const Color.fromARGB(
                                     255,
@@ -175,7 +127,7 @@ class _LoginState extends State<Login> {
                       ),
                       Expanded(
                         child: Text(
-                          logInfirebaseResponse,
+                          resetPasswordStatus,
                           style: TextStyle(color: Colors.redAccent),
                         ),
                       ),

@@ -1,4 +1,5 @@
-import 'package:couter_application/authentication/domain/user_registration.dart';
+import 'package:couter_application/authentication/data/register_user.dart';
+import 'package:couter_application/authentication/domain/authentication_service.dart';
 import 'package:couter_application/authentication/view/login.dart';
 import 'package:couter_application/counter_screen.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ class _RegisterState extends State<Register> {
   final TextEditingController _confirmpasswordController =
       TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final authenticationService = AuthenticationService();
 
   @override
   void dispose() {
@@ -33,6 +35,37 @@ class _RegisterState extends State<Register> {
 
   bool _isCheckingProcess = false;
   var registrationProcessStatus = "";
+
+  void onClickRegisterBtn() async {
+    if (_formKey.currentState!.validate()) {
+      print(
+        "Email Adress : ${_emailController.text} ############################################",
+      );
+      setState(() {
+        _isCheckingProcess = true;
+      });
+      var registrationStatus = await authenticationService.signUp(
+        RegisteredUser(
+          firstName: _firstNameController.text,
+          lastName: _lastNameController.text,
+          email: _emailController.text,
+          password: _passwordController.text,
+        ),
+      );
+      setState(() {
+        registrationProcessStatus = registrationStatus;
+      });
+      if (registrationStatus == "Registered") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => CounterScreen()),
+        );
+      } else {
+        setState(() {
+          _isCheckingProcess = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -174,38 +207,38 @@ class _RegisterState extends State<Register> {
                       ),
 
                       ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            print(
-                              "Email Adress : ${_emailController.text} ############################################",
-                            );
+                        onPressed: onClickRegisterBtn, //() async {
+                        // //   if (_formKey.currentState!.validate()) {
+                        // //     print(
+                        // //       "Email Adress : ${_emailController.text} ############################################",
+                        // //     );
 
-                            setState(() {
-                              _isCheckingProcess = true;
-                            });
+                        // //     setState(() {
+                        // //       _isCheckingProcess = true;
+                        // //     });
 
-                            var registrationStatus = await signUp(
-                                  emailAddress: _emailController.text,
-                                  password: _passwordController.text,
-                                );
+                        // //     var registrationStatus = await signUp(
+                        // //           emailAddress: _emailController.text,
+                        // //           password: _passwordController.text,
+                        // //         );
 
-                            setState(() {
-                              registrationProcessStatus = registrationStatus;
-                            });
+                        // //     setState(() {
+                        // //       registrationProcessStatus = registrationStatus;
+                        // //     });
 
-                            if (registrationStatus == "Registered") {
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => CounterScreen(),
-                                ),
-                              );
-                            } else {
-                              setState(() {
-                                _isCheckingProcess = false;
-                              });
-                            }
-                          }
-                        },
+                        // //     if (registrationStatus == "Registered") {
+                        // //       Navigator.of(context).pushReplacement(
+                        // //         MaterialPageRoute(
+                        // //           builder: (context) => CounterScreen(),
+                        // //         ),
+                        // //       );
+                        // //     } else {
+                        // //       setState(() {
+                        // //         _isCheckingProcess = false;
+                        // //       });
+                        // //     }
+                        // //   }
+                        // },
                         child:
                             _isCheckingProcess
                                 ? CircularProgressIndicator()
