@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:couter_application/authentication/data/register_user.dart';
+import 'package:couter_application/authentication/view/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class AuthenticationService {
   final _auth = FirebaseAuth.instance;
@@ -77,14 +79,29 @@ class AuthenticationService {
     String status = "";
     await _auth
         .sendPasswordResetEmail(email: email)
-        .then((value) => status = "Reset password Email is sent to your Email Please check.")
-        .catchError((e) => status = "We are not able to sent the reset password Email, Please try later.");
+        .then(
+          (value) =>
+              status =
+                  "Reset password Email is sent to your Email Please check.",
+        )
+        .catchError(
+          (e) =>
+              status =
+                  "We are not able to sent the reset password Email, Please try later.",
+        );
     return status;
   }
 
-  Future<void> logOut() async{
-    await _auth.signOut();
-    print("Log out successfully");
+  Future<void> logOut(BuildContext context) async {
+    try {
+      await _auth.signOut().then(
+        (value) => Navigator.of(
+          context,
+        ).pushReplacement(MaterialPageRoute(builder: (context) => Login())),
+      );
+      print("Log out successfully");
+    } catch (e) {
+      print("Log out exception : $e ..........................");
+    }
   }
-
 }

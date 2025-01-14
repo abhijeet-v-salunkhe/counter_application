@@ -17,6 +17,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   var resetPasswordStatus = "";
 
   @override
+  void dispose() {
+    _useremailController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(

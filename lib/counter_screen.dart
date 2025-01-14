@@ -26,13 +26,19 @@ class _CounterScreenState extends State<CounterScreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Counter App"),
-        actions: [IconButton(onPressed: authenticationService.logOut, icon: Icon(Icons.logout))],
+        actions: [
+          IconButton(
+            onPressed:() async{
+              await authenticationService.logOut(context);
+            },
+            icon: Icon(Icons.logout),
+          ),
+        ],
       ),
       body: Center(
         child: Row(
